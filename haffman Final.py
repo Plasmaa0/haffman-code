@@ -10,11 +10,10 @@ class Node:
         self.right = right
 
     def __repr__(self):
-        # , l: {self.left.digit}, r: {self.right.digit}
         return f'Node[\'{self.digit}\', {self.frequency}, l:{self.left}, r:{self.right}]'
 
 
-def find(digit, node: Node, route):  # search in binary tree
+def find(digit: str, node: Node, route: list) -> list:  # search in binary tree
     if len(node.digit) == 1:
         return route
     if digit in node.left.digit:
@@ -25,10 +24,17 @@ def find(digit, node: Node, route):  # search in binary tree
         return find(digit, node.right, route)
 
 
-if __name__ == "__main__":
+def arr2str(arr: list) -> str:
+    s = ''
+    for n in arr:
+        s += str(n)
+    return s
+
+
+def code():
+    print("Huffman coding\nInput text you want to code:", end=' ')
     s = input()
     rawdigits = list(set(s))
-    number = len(rawdigits)
     tree = list()
     digits = list()
     for digit in rawdigits:
@@ -47,5 +53,53 @@ if __name__ == "__main__":
         tree.append(newlist)
     tree = tree.pop().pop()
     rawdigits.sort()
+    code = dict()
     for digit in rawdigits:
-        print(f'\'{digit}\' code: {find(digit, tree, list())}')
+        a = arr2str(find(digit, tree, list()))
+        code[digit] = a
+        print(f'\'{digit}\' code: {a}')
+    print('Print coded text? (1-Y / 0-N): ', end='')
+    if input() in ['1', 'Y', 'y']:
+        n = str()
+        for digit in s:
+            n += code[digit]
+        print(f'Output text: {n}')
+
+
+def encode():
+    print("Huffman code decoder.\nCreate a dictionary of differrent symbols.\nType: *anysymbol* + *space* + *code of this symbol*")
+    print("Exmaple 'a 1101'.")
+    print("Press enter once to begin typing next symbol's code.")
+    print("Press enter twice to begin typing coded message.")
+    code = dict()
+    i = 0
+    while True:
+        try:
+            i += 1
+            print(f"{i} symbol:", end=' ')
+            digit, c = input().split()
+            code[c] = digit
+        except ValueError:
+            print("Type coded message:", end=' ')
+            break
+    s = input()
+    s = list(s)
+    buff = []
+    decoded = []
+    while True:
+        if len(s) == 0:
+            print(f'Encoded message: "{arr2str(decoded)}"')
+            break
+        buff.append(s.pop(0))
+        g = arr2str(buff)
+        if g in code:
+            decoded.append(code[g])
+            buff.clear()
+
+
+if __name__ == "__main__":
+    print("What you want to do?\n1. Code\n2. Encode\nAnswer: ", end='')
+    if(int(input()) == 1):
+        code()
+    else:
+        encode()
